@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       allowFontScaling: false,
       child: Container(
         child: MaterialApp(
-          title: "百姓生活+",
+          title: "电商",
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             primaryColor: Colors.pink,

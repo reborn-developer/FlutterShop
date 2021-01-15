@@ -3,6 +3,7 @@
 const serviceUrl = 'https://www.fastmock.site/mock/164c4936eff4b6c1250dd7b2c312c3ec/shop/';
 
 const servicePath = {
-  'homePathContext':serviceUrl+'wxmini/homePageContent', // 商店首页信息
+  'homePathContext':serviceUrl+'wxmini/homePageContent', // 商城首页信息
+  'homePageBelowConten':serviceUrl+'wxmini/homePageBelowConten' // 商城首页热卖商品
   
 };
