@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-
 import 'package:flutter_shop/pages/home_page.dart';
 import 'package:flutter_shop/pages/category_page.dart';
 import 'package:flutter_shop/pages/cart_page.dart';
@@ -31,7 +30,7 @@ class _IndexPageState extends State<IndexPage> {
     )
   ];
 
-  final List tabBodies = [
+  final List<Widget> tabBodies = [
     HomePage(),
     CategoryPage(),
     CartPage(),
@@ -39,11 +38,11 @@ class _IndexPageState extends State<IndexPage> {
   ];
 
   int currentIndex = 0;
-  var currentPage;
+  // var currentPage;
 
   @override
   void initState() {
-    currentPage = tabBodies[0];
+    // currentPage = tabBodies[0];
 
     super.initState();
   }
@@ -59,16 +58,21 @@ class _IndexPageState extends State<IndexPage> {
           onTap: (index) {
             setState(() {
               currentIndex = index;
-              currentPage = tabBodies[index];
+              // currentPage = tabBodies[index];
             });
           },
         ),
-        body: currentPage,
-
-        // body: IndexedStack(
-        //     index: currentIndex,
-        //     children: tabBodies
-        // )
+        // body: currentPage,
+        body: IndexedStack(
+            index: currentIndex,
+            children: [
+              // 注意此处直接用tabBodies数组有问题
+              HomePage(),
+              CategoryPage(),
+              CartPage(),
+              MemberPage()
+            ],
+        ),
     );
   }
 }

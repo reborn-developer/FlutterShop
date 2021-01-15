@@ -6,26 +6,27 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../service/service_method.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
 
-  // @override
-  // bool get wantKeepAlive =>true;
-
-  String homePageContent = '正在获取数据';
+  @override
+  bool get wantKeepAlive =>true;
 
   int page = 1;
   List<Map> hotGoodsList=[];
 
+  EasyRefreshController _controller = EasyRefreshController();
+
   @override
   void initState() {
     super.initState();
-    _getHotGoods();
+    // _getHotGoods();
     print('11111111');
   }
 
@@ -55,26 +56,50 @@ class _HomePageState extends State<HomePage> {
               List<Map> floor2 = (snapshot.data['data']['floor2'] as List).cast();
               List<Map> floor3 = (snapshot.data['data']['floor3'] as List).cast();
 
-              return SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    SwiperDiy(swiperDataList:swiperDataList),   //页面顶部轮播组件
-                    TopNavigator(navigatorList: navgatorList),
-                    AdBanner(adPicture: adPicture),
-                    LeaderPhone(leaderImage: leaderImage, leaderPhone: leaderPhone),
-                    Recommend(recommendList: recommendList),
-                    FloorTitle(picture_address: floor1Title),
-                    FloorContent(floorGoodsList: floor1),
-                    FloorTitle(picture_address: floor2Title),
-                    FloorContent(floorGoodsList: floor2),
-                    FloorTitle(picture_address: floor3Title),
-                    FloorContent(floorGoodsList: floor3),
-                    _hotGoods(),
+              return EasyRefresh(
+                controller: _controller,
+                footer: ClassicalFooter(
+                  bgColor: Colors.white,
+                  textColor: Colors.pink,
+                  infoColor: Colors.pink,
+                  showInfo: true,
+                  noMoreText: '',
+                  loadedText: '加载中...',
+                  loadReadyText: '上拉加载',
+                ),
+                  child: ListView(
+                    children: <Widget>[
+                      SwiperDiy(swiperDataList:swiperDataList),   //页面顶部轮播组件
+                      TopNavigator(navigatorList: navgatorList),
+                      AdBanner(adPicture: adPicture),
+                      LeaderPhone(leaderImage: leaderImage, leaderPhone: leaderPhone),
+                      Recommend(recommendList: recommendList),
+                      FloorTitle(picture_address: floor1Title),
+                      FloorContent(floorGoodsList: floor1),
+                      FloorTitle(picture_address: floor2Title),
+                      FloorContent(floorGoodsList: floor2),
+                      FloorTitle(picture_address: floor3Title),
+                      FloorContent(floorGoodsList: floor3),
+                      _hotGoods(),
+                    ],
+                  ),
+                onLoad: () async {
+                    print('开始加载更多.....');
 
+                    var formPage = {'page': page};
+                    await request('homePageBelowConten', formData: formPage).then((value) {
+                      // var data = json.decode(value.toString());
+                      // List<Map> newGoodsList = (data['data'] as List).cast();
+                      List<Map> newGoodsList = (value['data'] as List).cast();
 
-                  ],
-                )
+                      setState(() {
+                        hotGoodsList.addAll(newGoodsList);
+                        page++;
+                      });
+                    });
+                },
               );
+
             }else{
               return Center(
                 child: Text('加载中'),
@@ -83,6 +108,8 @@ class _HomePageState extends State<HomePage> {
           },
         )
     );
+
+    _controller.callLoad();
   }
 
   // 首页火爆商品数据
