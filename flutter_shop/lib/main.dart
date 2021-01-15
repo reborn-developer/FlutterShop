@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_shop/pages/index_page.dart';
 
 void main() {
@@ -8,14 +9,18 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: MaterialApp(
-        title: "百姓生活+",
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primaryColor: Colors.pink,
+    return ScreenUtilInit(
+      designSize: Size(750, 1334),
+      allowFontScaling: false,
+      child: Container(
+        child: MaterialApp(
+          title: "百姓生活+",
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primaryColor: Colors.pink,
+          ),
+          home: IndexPage(),
         ),
-        home: IndexPage(),
       ),
     );
   }
