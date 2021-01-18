@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_shop/service/service_method.dart';
+import 'dart:convert';
 
 class CategoryPage extends StatefulWidget {
   @override
@@ -6,8 +8,12 @@ class CategoryPage extends StatefulWidget {
 }
 
 class _CategoryPageState extends State<CategoryPage> {
+
+
+
   @override
   Widget build(BuildContext context) {
+    _getCategory();
     return Scaffold(
       body: Center(
         child: Text(
@@ -15,5 +21,16 @@ class _CategoryPageState extends State<CategoryPage> {
         ),
       ),
     );
+  }
+
+
+  void _getCategory() async {
+    await request('getCategory').then((val) {
+      // var data = json.decode(val.toString());
+      // print(data);
+
+      print(val);
+
+    });
   }
 }
