@@ -10,9 +10,37 @@ class _CartPageState extends State<CartPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text(
-            '购物车页面'
-        ),
+        child: Column(
+          children: [
+            Number(),
+            MyButton()
+          ],
+        )
       ),
     );  }
 }
+
+class Number extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(top: 200),
+      child: Text(
+        '0'
+      ),
+    );
+  }
+}
+
+class MyButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: RaisedButton(
+        onPressed: (){},
+        child: Text('递增'),
+      ),
+    );
+  }
+}
+

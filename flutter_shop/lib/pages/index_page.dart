@@ -4,6 +4,7 @@ import 'package:flutter_shop/pages/home_page.dart';
 import 'package:flutter_shop/pages/category_page.dart';
 import 'package:flutter_shop/pages/cart_page.dart';
 import 'package:flutter_shop/pages/member_page.dart';
+import 'package:flutter_shop/test/test_page3.dart';
 
 class IndexPage extends StatefulWidget {
   @override

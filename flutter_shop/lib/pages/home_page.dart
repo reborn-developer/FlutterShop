@@ -26,7 +26,6 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
   @override
   void initState() {
     super.initState();
-    // _getHotGoods();
     print('11111111');
   }
 
