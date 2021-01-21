@@ -1,46 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provide/provide.dart';
+import '../provide/cart.dart';
+import '../pages/cart_page/cart_item.dart';
+import '../pages/cart_page/cart_bottom.dart';
 
-class CartPage extends StatefulWidget {
-  @override
-  _CartPageState createState() => _CartPageState();
-}
-
-class _CartPageState extends State<CartPage> {
+class CartPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          children: [
-            Number(),
-            MyButton()
-          ],
-        )
+      appBar: AppBar(
+        title: Text('购物车'),
       ),
-    );  }
-}
+      body: FutureBuilder(
+        future: _getCartInfo(context),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List cartList = Provide.value<CartProvide>(context).cartList;
 
-class Number extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(top: 200),
-      child: Text(
-        '0'
+            return Stack(
+              children: [
+                Provide<CartProvide>(
+                builder:(context, child, childCategory) {
+                  cartList = Provide.value<CartProvide>(context).cartList;
+                  return ListView.builder(
+                    itemCount: cartList.length,
+                    itemBuilder: (context, index) {
+                      return CartItem(cartList[index]);
+                    },
+                  );
+                }),
+
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  child: CartBottom(),
+                ),
+              ],
+            );
+
+            // return ListView.builder(
+            //   itemCount: cartList.length,
+            //   itemBuilder: (context, index) {
+            //     return CartItem(cartList[index]);
+            //   },
+            // );
+
+          } else {
+            return Text('正在加载');
+          }
+        },
+
       ),
     );
   }
-}
 
-class MyButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: RaisedButton(
-        onPressed: (){},
-        child: Text('递增'),
-      ),
-    );
+  Future<String> _getCartInfo(BuildContext context) async {
+    await Provide.value<CartProvide>(context).getCartInfo();
+    return 'end';
   }
 }
+
 
