@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provide/provide.dart';
 import '../../provide/cart.dart';
 import '../../provide/details_info.dart';
+import '../../provide/currentIndex.dart';
 
 class DetailsBottom extends StatelessWidget {
   @override
@@ -15,25 +16,56 @@ class DetailsBottom extends StatelessWidget {
     var price = goodsInfo.presentPrice;
     var images = goodsInfo.image1;
 
-
     return Container(
       width: ScreenUtil().setWidth(750),
       height: ScreenUtil().setHeight(80),
       color: Colors.white,
       child: Row(
         children: [
-          InkWell(
-            onTap: (){},
-            child: Container(
-              width: ScreenUtil().setWidth(110),
-              alignment: Alignment.center,
-              child: Icon(
-                Icons.add_shopping_cart,
-                size: 35,
-                color: Colors.red,
+          Stack(
+            children: [
+              InkWell(
+                onTap: (){
+                  Provide.value<CurrentIndexProvide>(context).changeIndex(2);
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  width: ScreenUtil().setWidth(110),
+                  alignment: Alignment.center,
+                  child: Icon(
+                    Icons.add_shopping_cart,
+                    size: 35,
+                    color: Colors.red,
+                  ),
+                ),
               ),
-            ),
+              Provide<CartProvide>(
+                builder: (context, child, val) {
+                  int goodsCount = Provide.value<CartProvide>(context).allGoodsCount;
+                  return Positioned(
+                      top: 0,
+                      right: 10,
+                      child: Container(
+                        padding: EdgeInsets.fromLTRB(6, 3, 6, 3),
+                        decoration: BoxDecoration(
+                          color: Colors.pink,
+                          border: Border.all(width: 2, color: Colors.white),
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        child: Text(
+                          '${goodsCount}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: ScreenUtil().setSp(22),
+                          ),
+                        ),
+                      ),
+                  );
+                },
+              )
+            ],
           ),
+
           InkWell(
             onTap: () async {
               await Provide.value<CartProvide>(context).save(goodsId, goodsName, count, price, images);
