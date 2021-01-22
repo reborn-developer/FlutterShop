@@ -39,18 +39,10 @@ class CartPage extends StatelessWidget {
               ],
             );
 
-            // return ListView.builder(
-            //   itemCount: cartList.length,
-            //   itemBuilder: (context, index) {
-            //     return CartItem(cartList[index]);
-            //   },
-            // );
-
           } else {
             return Text('正在加载');
           }
         },
-
       ),
     );
   }

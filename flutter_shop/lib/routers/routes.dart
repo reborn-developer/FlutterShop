@@ -11,8 +11,6 @@ class Routes{
           print('ERROR====>ROUTE WAS NOT FONUND!!!');
         }
     );
-
     router.define(detailsPage,handler:detailsHandler);
   }
-
 }

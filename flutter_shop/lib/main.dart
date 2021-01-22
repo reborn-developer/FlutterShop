@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
       allowFontScaling: false,
       child: Container(
         child: MaterialApp(
-          title: "电商",
+          title: "生活家",
           onGenerateRoute: Application.router.generator,
           debugShowCheckedModeBanner: false,
           theme: ThemeData(

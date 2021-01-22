@@ -7,9 +7,8 @@ class CartProvide with ChangeNotifier {
   String cartString = "[]";
   List<CartInfoModel> cartList = [];
 
-  double allPrice =0;   //总价格
-  int allGoodsCount =0;  //商品总数量
-
+  double allPrice =0;      //总价格
+  int allGoodsCount =0;   //商品总数量
   bool isAllCheck = true; // 是否全选
 
   // 增加到购物车
@@ -20,15 +19,18 @@ class CartProvide with ChangeNotifier {
     var temp = (cartString == null ? [] : json.decode(cartString.toString()));
 
     List<Map> tempList = (temp as List).cast();
-    
+
+    //声明变量，用于判断购物车中是否已经存在此商品ID
     bool isHave = false;
-    
+
+    //用于进行循环的索引使用
     int ival = 0;
 
     allPrice = 0;
-    allGoodsCount = 0;
+    allGoodsCount = 0; //把商品总数量设置为0
     
-    tempList.forEach((item) {
+    tempList.forEach((item) {  //进行循环，找出是否已经存在该商品
+      //如果存在，数量进行+1操作
       if (item['goodsId'] == goodsId) {
         tempList[ival]['count'] = item['count'] + 1;
         cartList[ival].count++;
@@ -43,6 +45,7 @@ class CartProvide with ChangeNotifier {
       ival++;
     });
 
+    //  如果没有，进行增加
     if(!isHave) {
       Map<String, dynamic> newGoods = {
         'goodsId' : goodsId,
@@ -50,7 +53,7 @@ class CartProvide with ChangeNotifier {
         'count' : count,
         'price' : price,
         'images' : images,
-        'isCheck' : true,
+        'isCheck' : true,  //是否已经选择
       };
 
       tempList.add(newGoods);
@@ -60,9 +63,8 @@ class CartProvide with ChangeNotifier {
       allGoodsCount += count;
     }
 
+    //把字符串进行encode操作
     cartString = json.encode(tempList).toString();
-    // print('字符串${cartString}');
-    // print('数据模型${cartList}');
 
     prefs.setString('cartInfo', cartString);
 
@@ -80,12 +82,16 @@ class CartProvide with ChangeNotifier {
     notifyListeners();
   }
 
-  // 查询
+  //得到购物车中的商品
   getCartInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    //获得购物车中的商品,这时候是一个字符串
     cartString = prefs.getString('cartInfo');
+
+    //把cartList进行初始化，防止数据混乱
     cartList = [];
 
+    //判断得到的字符串是否有值，如果不判断会报错
     if (cartString == null) {
       cartList = [];
     } else {
@@ -114,7 +120,6 @@ class CartProvide with ChangeNotifier {
   deleteOneGoods(String goodsId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     cartString = prefs.getString('cartInfo');
-    
      List<Map> tempList = (json.decode(cartString.toString()) as List).cast();
 
      int tempIndex = 0;
@@ -136,7 +141,7 @@ class CartProvide with ChangeNotifier {
   }
 
 
-  // 单个商品选中状态改变
+  // 修改单个商品选中状态改变
   changeCheckState(CartInfoModel cartItem) async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     cartString=prefs.getString('cartInfo');  //得到持久化的字符串
@@ -172,7 +177,6 @@ class CartProvide with ChangeNotifier {
     cartString= json.encode(newList).toString();//形成字符串
     prefs.setString('cartInfo', cartString);//进行持久化
     await getCartInfo();
-
   }
 
   // 商品数量加减

@@ -2,7 +2,11 @@ import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_shop/model/category.dart';
+import 'package:flutter_shop/provide/child_category.dart';
+import 'package:flutter_shop/provide/currentIndex.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:provide/provide.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../service/service_method.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -33,27 +37,26 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
   Widget build(BuildContext context) {
     var formData = {'lon': '115.02932', 'lat': '35.76189'};
     return Scaffold(
-        appBar: AppBar(title: Text('电商')),
+        appBar: AppBar(title: Text('生活家')),
         body:FutureBuilder(
           future:request('homePathContext', formData: formData),
           builder: (context,snapshot){
-            // print('snapshot====${snapshot.data}==========');
             if(snapshot.hasData){
               // 数据处理
-              // var data=json.decode(snapshot.data.toString());
-              // List<Map> swiperDataList = (data['data']['slides'] as List).cast();
-              List<Map> swiperDataList = (snapshot.data['data']['slides'] as List).cast(); // 顶部轮播组件数
-              List<Map> navgatorList = (snapshot.data['data']['category'] as List).cast(); // 分类视图数
-              String adPicture = snapshot.data['data']['advertesPicture']['PICTURE_ADDRESS'];
-              String leaderImage = snapshot.data['data']['shopInfo']['leaderImage'];
-              String leaderPhone = snapshot.data['data']['shopInfo']['leaderPhone'];
-              List<Map> recommendList = (snapshot.data['data']['recommend'] as List).cast();
-              String floor1Title = snapshot.data['data']['floor1Pic']['PICTURE_ADDRESS'];
-              String floor2Title = snapshot.data['data']['floor2Pic']['PICTURE_ADDRESS'];
-              String floor3Title = snapshot.data['data']['floor3Pic']['PICTURE_ADDRESS'];
-              List<Map> floor1 = (snapshot.data['data']['floor1'] as List).cast();
-              List<Map> floor2 = (snapshot.data['data']['floor2'] as List).cast();
-              List<Map> floor3 = (snapshot.data['data']['floor3'] as List).cast();
+              var data=json.decode(snapshot.data.toString());
+
+              List<Map> swiperDataList = (data['data']['slides'] as List).cast(); // 顶部轮播组件数
+              List<Map> navgatorList =(data['data']['category'] as List).cast(); //类别列表
+              String adPicture = data['data']['advertesPicture']['PICTURE_ADDRESS']; //广告图片
+              String  leaderImage= data['data']['shopInfo']['leaderImage'];  //店长图片
+              String  leaderPhone = data['data']['shopInfo']['leaderPhone']; //店长电话
+              List<Map> recommendList = (data['data']['recommend'] as List).cast(); // 商品推荐
+              String floor1Title =data['data']['floor1Pic']['PICTURE_ADDRESS'];//楼层1的标题图片
+              String floor2Title =data['data']['floor2Pic']['PICTURE_ADDRESS'];//楼层1的标题图片
+              String floor3Title =data['data']['floor3Pic']['PICTURE_ADDRESS'];//楼层1的标题图片
+              List<Map> floor1 = (data['data']['floor1'] as List).cast(); //楼层1商品和图片
+              List<Map> floor2 = (data['data']['floor2'] as List).cast(); //楼层1商品和图片
+              List<Map> floor3 = (data['data']['floor3'] as List).cast(); //楼层1商品和图片
 
               return EasyRefresh(
                 controller: _controller,
@@ -87,9 +90,8 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
 
                     var formPage = {'page': page};
                     await request('homePageBelowConten', formData: formPage).then((value) {
-                      // var data = json.decode(value.toString());
-                      // List<Map> newGoodsList = (data['data'] as List).cast();
-                      List<Map> newGoodsList = (value['data'] as List).cast();
+                      var data = json.decode(value.toString());
+                      List<Map> newGoodsList = (data['data'] as List).cast();
 
                       setState(() {
                         hotGoodsList.addAll(newGoodsList);
@@ -115,9 +117,8 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
   void _getHotGoods() {
     var formPage = {'page': page};
     request('homePageBelowConten', formData: formPage).then((value) {
-      // var data = json.decode(value.toString());
-      // List<Map> newGoodsList = (data['data'] as List).cast();
-      List<Map> newGoodsList = (value['data'] as List).cast();
+      var data = json.decode(value.toString());
+      List<Map> newGoodsList = (data['data'] as List).cast();
 
       setState(() {
         hotGoodsList.addAll(newGoodsList);
@@ -230,9 +231,11 @@ class TopNavigator extends StatelessWidget {
 
   TopNavigator({Key key, this.navigatorList}) : super(key: key);
 
-  Widget _gridViewItemUI(BuildContext context, item) {
+  Widget _gridViewItemUI(BuildContext context, item, index) {
     return InkWell(
-      onTap: (){print('点击了导航');},
+      onTap: (){
+        _goCategory(context,index,item['mallCategoryId']);
+      },
       child: Column(
         children: [
           Image.network(item['image'], width: ScreenUtil().setWidth(95)),
@@ -242,12 +245,29 @@ class TopNavigator extends StatelessWidget {
     );
   }
 
+
+  void _goCategory(context, int index, String categoryId) async {
+
+    await request('getCategory').then((val) {
+      var data = json.decode(val.toString());
+      CategoryModel category = CategoryModel.fromJson(data);
+
+      List list = category.data;
+
+      Provide.value<ChildCategory>(context).changeCategory(categoryId,index);
+      Provide.value<ChildCategory>(context).getChildCategory( list[index].bxMallSubDto,categoryId);
+      Provide.value<CurrentIndexProvide>(context).changeIndex(1);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
 
     if (this.navigatorList.length > 10) {
       this.navigatorList.removeRange(10, navigatorList.length);
     }
+
+    var tempIndex = -1;
     return Container(
       height: ScreenUtil().setHeight(320),
       padding: EdgeInsets.all(3.0),
@@ -256,7 +276,8 @@ class TopNavigator extends StatelessWidget {
         crossAxisCount: 5,
         padding: EdgeInsets.all(5.0),
         children: navigatorList.map((item) {
-          return _gridViewItemUI(context, item);
+          tempIndex++;
+          return _gridViewItemUI(context, item, tempIndex);
         }).toList(),
       ),
     );
@@ -348,7 +369,8 @@ class Recommend extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Image.network(recommendList[index]['image']),
+            Image.network(recommendList[index]['image'],
+            ),
             Text('￥${recommendList[index]['mallPrice']}'),
             Text(
               '￥${recommendList[index]['price']}',

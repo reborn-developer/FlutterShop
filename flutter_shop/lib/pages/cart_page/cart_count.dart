@@ -79,7 +79,4 @@ class CartCount extends StatelessWidget {
       child: Text('${item.count}'),
     );
   }
-
-
-
 }

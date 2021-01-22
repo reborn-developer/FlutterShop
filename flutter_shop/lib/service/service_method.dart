@@ -3,6 +3,7 @@ import 'package:flutter_shop/config/service_url.dart';
 import 'dart:async';
 import 'dart:io';
 
+// 统一封装网络请求
 Future request(url, {formData}) async {
   try{
     // print('开始获取数据.............');

@@ -100,6 +100,5 @@ class CartItem extends StatelessWidget {
       ),
     );
   }
-
 }
 

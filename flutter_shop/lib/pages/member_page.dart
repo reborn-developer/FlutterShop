@@ -27,9 +27,10 @@ class MemberPage extends StatelessWidget {
       child: Column(
         children: [
           Container(
+            width: ScreenUtil().setWidth(100),
             margin: EdgeInsets.only(top: 30.0),
             child: ClipOval(
-              child: Image.network('http://blogimages.jspang.com/blogtouxiang1.jpg'),
+              child: Image.network('https://pics5.baidu.com/feed/42a98226cffc1e17ea273e1a00e82605728de984.jpeg?token=4cbdbe3238d0761dcc71727d73aae348'),
             ),
           ),
           Container(
@@ -161,6 +162,5 @@ class MemberPage extends StatelessWidget {
       ),
     );
   }
-
 }
 

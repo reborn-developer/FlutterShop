@@ -7,6 +7,8 @@ class ChildCategory with ChangeNotifier{
 
   int childIndex = 0; // 子类高亮索引
 
+  int categoryIndex = 0; // 大类索引
+
   String categoryId = '4'; // 大类ID
 
   String subId = ''; // 小类ID
@@ -14,6 +16,14 @@ class ChildCategory with ChangeNotifier{
   int page = 1; // 列表页数
 
   String noMoreText = ''; // 显示没有数据的文字
+
+  // 首页点击类别时更改类型
+  changeCategory(String id, int index) {
+    categoryId = id;
+    categoryIndex = index;
+    subId = '';
+    notifyListeners();
+  }
 
   // 大类切换逻辑
   getChildCategory(List<BxMallSubDto> list, String id) {

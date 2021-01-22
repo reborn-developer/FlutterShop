@@ -23,19 +23,12 @@ class DetailsInfoProvide with ChangeNotifier {
   }
 
   // 从后台获取商品详情数据
-  getGoodsInfo(String id) async {
-    var formData = {'goodId': id};
-    await request('getGoodDetailById', formData: formData).then((value) {
-
-      // var responseData = json.decode(value.toString());
-      // print(responseData);
-      // print(value);
-
-      goodsInfo = DetailsModel.fromJson(value);
-
+  getGoodsInfo(String id )async{
+    var formData = { 'goodId':id, };
+    await request('getGoodDetailById',formData:formData).then((val){
+      var responseData= json.decode(val.toString());
+      goodsInfo=DetailsModel.fromJson(responseData);
       notifyListeners();
     });
   }
-
-
 }
